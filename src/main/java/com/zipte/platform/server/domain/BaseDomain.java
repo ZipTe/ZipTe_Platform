@@ -1,11 +1,16 @@
 package com.zipte.platform.server.domain;
 
 
-import java.time.LocalDateTime;
+import lombok.Getter;
+import lombok.experimental.SuperBuilder;
 
+import java.time.Instant;
+
+@Getter
+@SuperBuilder
 public abstract class BaseDomain {
 
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private Instant createdAt;
+    private Instant updatedAt;
 
 }
