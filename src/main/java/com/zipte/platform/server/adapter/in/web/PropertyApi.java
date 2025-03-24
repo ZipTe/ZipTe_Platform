@@ -3,9 +3,12 @@ package com.zipte.platform.server.adapter.in.web;
 import com.zipte.platform.core.response.ApiResponse;
 import com.zipte.platform.core.response.pageable.PageRequest;
 import com.zipte.platform.core.response.pageable.PageResponse;
+import com.zipte.platform.server.adapter.in.mq.dto.PropertyEvent;
+import com.zipte.platform.server.adapter.in.mq.dto.PropertyEventType;
 import com.zipte.platform.server.adapter.in.web.dto.PropertyDetailResponse;
 import com.zipte.platform.server.adapter.in.web.dto.PropertyListResponse;
 import com.zipte.platform.server.adapter.in.web.dto.PropertyRequest;
+import com.zipte.platform.server.adapter.out.kafka.KafkaProducer;
 import com.zipte.platform.server.application.in.property.*;
 import com.zipte.platform.server.domain.property.Property;
 import jakarta.validation.Valid;
@@ -28,11 +31,19 @@ public class PropertyApi {
     private final UpdatePropertyUseCase updateService;
     private final DeletePropertyUseCase deleteService;
 
+    ///  mq까지 한번에 전송
+    private final KafkaProducer<PropertyEvent> kafkaProducer;
+
     // 매물 생성
     @PostMapping
     public ApiResponse<PropertyDetailResponse> create(@Valid @RequestBody PropertyRequest request) {
 
-        return ApiResponse.created(createService.create(request));
+        Property property = createService.create(request);
+
+        PropertyEvent event = PropertyEvent.of(PropertyEventType.ADD, property);
+        kafkaProducer.send("property", event);
+
+        return ApiResponse.created(PropertyDetailResponse.from(property));
     }
 
     // 최신 매물 목록 조회
@@ -83,7 +94,9 @@ public class PropertyApi {
     // 매물 상세 조회
     @GetMapping("/{id}")
     public ApiResponse<PropertyDetailResponse> getDetailOne(@PathVariable Long id) {
-        return ApiResponse.ok(getService.getPropertyDetails(id));
+        Property property = getService.getPropertyDetails(id);
+
+        return ApiResponse.ok(PropertyDetailResponse.from(property));
     }
 
     // 매물 삭제

@@ -11,7 +11,8 @@ import lombok.Getter;
 public class PropertyDetailResponse {
 
     private Long id;
-    private String ownerName;
+    private Long userId;
+    private String complexCode;
     private PropertyType type;
     private long price;
     private boolean verified;
@@ -19,10 +20,11 @@ public class PropertyDetailResponse {
     private PropertySnippetResponse snippet;
     private PropertyStatisticsResponse statistics;
 
-    public static PropertyDetailResponse from(Property property, User owner) {
+    public static PropertyDetailResponse from(Property property) {
         return PropertyDetailResponse.builder()
                 .id(property.getId())
-                .ownerName(owner.getUsername())
+                .userId(property.getOwnerId())
+                .complexCode(property.getKaptCode())
                 .type(property.getType())
                 .price(property.getPrice())
                 .verified(property.isVerified())
