@@ -37,7 +37,7 @@ public class PropertyService implements CreatePropertyUseCase, GetPropertyDetail
     private final LoadEstatePort loadEstatePort;
 
     @Override
-    public PropertyDetailResponse create(PropertyRequest request) {
+    public Property create(PropertyRequest request) {
 
         User user = getUser(request.getUserId());
 
@@ -49,9 +49,7 @@ public class PropertyService implements CreatePropertyUseCase, GetPropertyDetail
 
         PropertyStatistic statistic = PropertyStatistic.of(0, 0);
 
-        Property property = savePort.saveProperty(Property.of(user.getId(), request.getType(), address, snippet, statistic, request.getPrice(), request.getAptCode()));
-
-        return PropertyDetailResponse.from(property, user);
+        return savePort.saveProperty(Property.of(user.getId(), request.getType(), address, snippet, statistic, request.getPrice(), request.getAptCode()));
     }
 
     @Override
@@ -60,14 +58,10 @@ public class PropertyService implements CreatePropertyUseCase, GetPropertyDetail
     }
 
     @Override
-    public PropertyDetailResponse getPropertyDetails(Long propertyId) {
+    public Property getPropertyDetails(Long propertyId) {
 
-        Property property = loadPort.loadProperty(propertyId)
+        return loadPort.loadProperty(propertyId)
                 .orElseThrow(() -> new EntityNotFoundException("매물이 존재하지 않습니다."));
-
-        User user = getUser(property.getOwnerId());
-
-        return PropertyDetailResponse.from(property, user);
 
     }
 
