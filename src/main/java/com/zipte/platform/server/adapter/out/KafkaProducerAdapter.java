@@ -1,4 +1,4 @@
-package com.zipte.platform.server.adapter.out.kafka;
+package com.zipte.platform.server.adapter.out;
 
 import com.zipte.platform.server.application.out.mq.ProducerPort;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +9,12 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class KafkaProducer<T> implements ProducerPort<T> {
+public class KafkaProducerAdapter<T> implements ProducerPort<T> {
+
+    /*
+        현재는 제네릭으로 처리하지만,
+        문제가 생긴다면, 개별로 만들어도 될 것 같다.
+     */
 
     private final KafkaTemplate<String, T> kafkaTemplate;
 

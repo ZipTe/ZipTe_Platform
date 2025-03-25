@@ -24,7 +24,8 @@ public class PropertyPersistenceAdapter implements LoadPropertyPort, SavePropert
     public Property saveProperty(Property property) {
 
         var entity = PropertyJpaEntity.from(property);
-        return repository.save(entity).toDomain();
+        return repository.save(entity)
+                .toDomain();
     }
 
     @Override

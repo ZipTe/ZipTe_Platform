@@ -3,13 +3,14 @@ package com.zipte.platform.server.adapter.in.web;
 import com.zipte.platform.core.response.ApiResponse;
 import com.zipte.platform.core.response.pageable.PageRequest;
 import com.zipte.platform.core.response.pageable.PageResponse;
-import com.zipte.platform.server.adapter.in.mq.dto.PropertyEvent;
-import com.zipte.platform.server.adapter.in.mq.dto.PropertyEventType;
+import com.zipte.platform.core.util.KafkaKeyGenerator;
+import com.zipte.platform.server.adapter.out.kafka.event.PropertyEvent;
+import com.zipte.platform.server.adapter.out.kafka.event.EventType;
 import com.zipte.platform.server.adapter.in.web.dto.PropertyDetailResponse;
 import com.zipte.platform.server.adapter.in.web.dto.PropertyListResponse;
 import com.zipte.platform.server.adapter.in.web.dto.PropertyRequest;
-import com.zipte.platform.server.adapter.out.kafka.KafkaProducer;
 import com.zipte.platform.server.application.in.property.*;
+import com.zipte.platform.server.application.out.mq.ProducerPort;
 import com.zipte.platform.server.domain.property.Property;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +33,7 @@ public class PropertyApi {
     private final DeletePropertyUseCase deleteService;
 
     ///  mq까지 한번에 전송
-    private final KafkaProducer<PropertyEvent> kafkaProducer;
+    private final ProducerPort<PropertyEvent> kafkaProducer;
 
     // 매물 생성
     @PostMapping
@@ -40,8 +41,8 @@ public class PropertyApi {
 
         Property property = createService.create(request);
 
-        PropertyEvent event = PropertyEvent.of(PropertyEventType.ADD, property);
-        kafkaProducer.send("property", event);
+        PropertyEvent event = PropertyEvent.of(EventType.ADD, property);
+        kafkaProducer.send(KafkaKeyGenerator.getProperty(), event);
 
         return ApiResponse.created(PropertyDetailResponse.from(property));
     }

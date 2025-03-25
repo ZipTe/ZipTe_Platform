@@ -1,4 +1,4 @@
-package com.zipte.platform.server.adapter.in.mq.dto;
+package com.zipte.platform.server.adapter.out.kafka.event;
 
 import com.zipte.platform.server.domain.property.Property;
 import lombok.Builder;
@@ -10,12 +10,12 @@ import java.time.Instant;
 @Builder
 public class PropertyEvent {
 
-    private PropertyEventType type;
+    private EventType type;
     private String complexCode;
     private long price;
     private Instant occurredAt;
 
-    public static PropertyEvent of(PropertyEventType type, Property property) {
+    public static PropertyEvent of(EventType type, Property property) {
 
         return PropertyEvent.builder()
                 .type(type)

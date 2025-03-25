@@ -48,8 +48,9 @@ public class PropertyService implements CreatePropertyUseCase, GetPropertyDetail
         PropertySnippet snippet = PropertySnippet.of(estate.getKaptName(), request.getDescription(), request.getQuantity(), request.getBathrooms(), request.getBuiltYear());
 
         PropertyStatistic statistic = PropertyStatistic.of(0, 0);
+        Property property = Property.of(user.getId(), request.getType(), address, snippet, statistic, request.getPrice(), request.getAptCode());
 
-        return savePort.saveProperty(Property.of(user.getId(), request.getType(), address, snippet, statistic, request.getPrice(), request.getAptCode()));
+        return savePort.saveProperty(property);
     }
 
     @Override
