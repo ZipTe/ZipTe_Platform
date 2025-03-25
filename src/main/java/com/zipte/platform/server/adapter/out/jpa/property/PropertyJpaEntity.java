@@ -65,6 +65,8 @@ public class PropertyJpaEntity extends BaseEntity {
                 .statistic(statistic.toDomain())
                 .price(price)
                 .verified(verified)
+                .createdAt(getCreatedAt())
+                .updatedAt(getUpdatedAt())
                 .build();
     }
 
